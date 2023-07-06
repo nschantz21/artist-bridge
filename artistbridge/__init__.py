@@ -2,8 +2,9 @@ import spotipy
 import numpy as np
 from numpy.linalg import norm
 
-class Track: 
-    def __init__(self, data=None, song_id=None):
+class Track:
+    def __init__(self, data=None, song_id=None, sp=None):
+        self.sp = sp
         if song_id:
             data = sp.audio_features(tracks=[song_id,])[0]
         self.data = data
@@ -50,7 +51,7 @@ class Track:
         return cosine
 
     def _recommendations(self):
-        recs = sp.recommendations(
+        recs = self.sp.recommendations(
             seed_tracks=[self.id,]
         )
 
@@ -62,7 +63,7 @@ class Track:
         return rec_ids
 
     def get_track(self):
-        return sp.track(self.id)
+        return self.sp.track(self.id)
 
     def __eq__(self, other):
         return self.id == other.id
@@ -72,7 +73,7 @@ class Track:
 
 
 
-def make_playlist(start_track: Track, end_track: Track, steps: int=10):
+def make_playlist(start_track: Track, end_track: Track, steps: int=10, sp=None):
     playlist_start = [start_track,]
     playlist_end = [end_track,]
     s = start_track
@@ -80,8 +81,8 @@ def make_playlist(start_track: Track, end_track: Track, steps: int=10):
 
     for i in range(steps//2):
         # get recommendations
-        start_recs = [Track(song_id=x) for x in s.recommendations()]
-        end_recs = [Track(song_id=x) for x in e.recommendations()]
+        start_recs = [Track(song_id=x, sp=sp) for x in s.recommendations()]
+        end_recs = [Track(song_id=x, sp=sp) for x in e.recommendations()]
         # make comparisons
         start_end_comparisons = [Track.cmp(s, x) for x in end_recs]
         end_start_comparisons = [Track.cmp(e, x) for x in start_recs]
