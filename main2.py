@@ -1,10 +1,11 @@
-# artist-bridge
-
-Example usage:
-```{python}
 import spotipy
 import artistbridge
 from spotipy.oauth2 import SpotifyClientCredentials, SpotifyOAuth
+import os
+
+SPOTIPY_CLIENT_ID = os.environ["SPOTIPY_CLIENT_ID"]
+SPOTIPY_CLIENT_SECRET = os.environ["SPOTIPY_CLIENT_SECRET"]
+SPOTIPY_USER_ID = os.environ["SPOTIPY_USER_ID"]
 
 scope = "playlist-modify-public"
 sp = spotipy.Spotify(
@@ -13,7 +14,8 @@ sp = spotipy.Spotify(
         client_secret=SPOTIPY_CLIENT_SECRET,
         redirect_uri="http://example.com",
         scope=scope,
-        open_browser=False)
+        open_browser=False,
+        cache_path='cache.txt')
     )
 
 new_playlist = sp.user_playlist_create(
@@ -24,23 +26,18 @@ new_playlist = sp.user_playlist_create(
 
 
 #search_results = sp.search("street spirit", type="track", limit=10)
-search_results = sp.search("cruel summer", type="track", limit=10)
+#search_results = sp.search("cruel summer", type="track", limit=10)
 
-for i in search_results["tracks"]["items"]:
-    print(i["name"], i["id"])
+#for i in search_results["tracks"]["items"]:
+#    print(i["name"], i["id"])
 
-starting_track = Track(song_id='1BxfuPKGuaTgP7aM0Bbdwr')
-ending_track = Track(song_id="2QwObYJWyJTiozvs0RI7CF")
+starting_track = artistbridge.Track(song_id='1BxfuPKGuaTgP7aM0Bbdwr', sp=sp)
+ending_track = artistbridge.Track(song_id="2QwObYJWyJTiozvs0RI7CF", sp=sp)
 
-my_playlist = make_playlist(starting_track, ending_track, 50)
+my_playlist = artistbridge.make_playlist(starting_track, ending_track, 50, sp=sp)
 
 sp.user_playlist_add_tracks(
     SPOTIPY_USER_ID,
     playlist_id=new_playlist['uri'],
     tracks=[x.id for x in my_playlist]
 )
-```
-
-```{bash}
-flask --app main run --host=0.0.0.0 --port=8080 --debug
-```

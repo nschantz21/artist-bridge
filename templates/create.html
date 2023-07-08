@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>{% block title %} Add a New Message {% endblock %}</h1>
+    <form method="post">
+        <label for="song1">Song 1</label>
+        <br>
+        <input type="text" name="song1"
+               placeholder="Song 1"
+               value="{{ request.form['song1'] }}"></input>
+        <br>
+
+        <label for="song2">Song 2</label>
+        <br>
+        <input type="text" name="song2"
+            placeholder="Song 2"
+            value="{{ request.form['song2'] }}"></input>
+        <br>        
+        <label for="name">Playlist Name</label>
+        <br>
+        <input type="text" name="name"
+            placeholder="playlist name"
+            value="{{ request.form['name'] }}"></input>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+{% endblock %}
